@@ -11,11 +11,15 @@ from django.utils.timezone import now
 from datetime import timedelta
 
 
-class TodoView(APIView):
-    def get(self, request, *args, **kwargs):
-        list = Todo.objects.all()
-        serializer = TodoSerializer(list, many=True)
-        return Response(serializer.data)
+class TodoView(generics.ListCreateAPIView):
+    serializer_class = TodoSerializer
+
+    def get_queryset(self):
+        search = self.request.query_params.get("search")
+        if search:
+            return Todo.objects.filter(name__icontains=search)
+        else:
+            return Todo.objects.all()
 
     def post(self, request, *args, **kwargs):
         serializer = TodoSerializer(data=request.data)
