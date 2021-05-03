@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from .models import Todo
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import TodoSerializer
+from .serializers import TodoSerializer, SearchSerializer
 from rest_framework import status
 from rest_framework import generics
 from django.utils.timezone import now
@@ -12,7 +12,11 @@ from datetime import timedelta
 
 
 class TodoView(generics.ListCreateAPIView):
-    serializer_class = TodoSerializer
+    def get_serializer_class(self):
+        if self.request.query_params.get("search"):
+            return SearchSerializer
+        else:
+            return TodoSerializer
 
     def get_queryset(self):
         search = self.request.query_params.get("search")

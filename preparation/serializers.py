@@ -17,3 +17,9 @@ class TodoSerializer(serializers.ModelSerializer):
     def get_items_completed_in_last_2_days(self, obj):
         date_created = now() - timedelta(days=2)
         return Todo.objects.filter(date_created__gt=date_created).count()
+
+
+class SearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Todo
+        fields = "__all__"
